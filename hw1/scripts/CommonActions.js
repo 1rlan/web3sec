@@ -1,6 +1,6 @@
 
 async function main() {
-    // await erc20actions();
+    await erc20actions();
     await erc721actions();
 }
 

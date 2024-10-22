@@ -14,15 +14,14 @@ contract IrlaCoinERC20 is ERC20, ERC20Permit, Ownable {
         _mint(msg.sender, 10000000 * 10 ** decimals()); 
     }
 
-    function buyTokens() external payable {
-        uint256 tokensToBuy = msg.value / price;
-        _mint(msg.sender, tokensToBuy);
-    }
-
     // MARK :- ERC20
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
+    }
+
+    function buy(address to) public payable {
+        _mint(to, msg.value);
     }
 
     function transfer(address recipient, uint256 amount) public override returns (bool) {

@@ -2,16 +2,15 @@
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-contract IrlaCoinERC20 is ERC20, ERC20Permit {
+contract IrlaCoinERC20 is ERC20, ERC20Permit, Ownable {
     uint256 fee = 100;
     uint256 price = 10;
-    address public owner;
 
-    constructor() ERC20("IrlaCoin", "IRC") ERC20Permit("IrlaCoin") {
-        owner = msg.sender;
+    constructor(address owner) ERC20("IrlaCoin", "IRC") ERC20Permit("IrlaCoin") Ownable(owner) {
         _mint(msg.sender, 10000000 * 10 ** decimals()); 
     }
 
@@ -22,11 +21,12 @@ contract IrlaCoinERC20 is ERC20, ERC20Permit {
 
     // MARK :- ERC20
 
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
-        uint256 amountAfterFee = amount - fee;
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
 
-        _transfer(msg.sender, owner, fee);
-        _transfer(msg.sender, recipient, amountAfterFee);
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        _sendAndSaveFees(msg.sender, recipient, amount);
 
         return true;
     }
@@ -34,6 +34,7 @@ contract IrlaCoinERC20 is ERC20, ERC20Permit {
     function transferFrom(address from, address to, uint256 value) public override returns (bool) {
         _spendAllowance(from, msg.sender, value);
         _sendAndSaveFees(from, to, value);
+
         return true;
     }
 
@@ -43,6 +44,6 @@ contract IrlaCoinERC20 is ERC20, ERC20Permit {
         uint256 amountAfterFee = amount - fee;
 
         _transfer(from, to, amountAfterFee);
-        _transfer(from, owner, fee);
+        _transfer(from, owner(), fee);
     }
 }

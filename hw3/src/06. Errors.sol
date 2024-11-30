@@ -19,7 +19,12 @@ contract Errors is IErrors {
 }
 
 contract ErrorsOptimized is IErrors {
-    /* YOUR SOLUTION GOES HERE */
+    address immutable owner = msg.sender;
 
-    function call() public view {}
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Error: You are not a owner!");
+        _;
+    }
+
+    function call() public view onlyOwner {}
 }
